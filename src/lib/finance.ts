@@ -41,9 +41,9 @@ export const categories = [
 ];
 
 export const categoryColors: Record<string, string> = {
-  Vivienda: '#8b9d89', Alimentación: '#efaa78', Transporte: '#b9acd8',
-  Educación: '#83aeb7', Ocio: '#e8ca80', Salud: '#a0be9b',
-  Viajes: '#d893a5', Trabajo: '#7da7cd', Otros: '#b3b9c5',
+  Vivienda: '#087f46', Alimentación: '#a3c86d', Transporte: '#36a58b',
+  Educación: '#5e8976', Ocio: '#c1dcb1', Salud: '#76b896',
+  Viajes: '#187b74', Trabajo: '#64974b', Otros: '#8aa99b',
 };
 
 export const frequencyLabels: Record<Frequency, string> = {
@@ -135,8 +135,8 @@ export const initialData: FinanceData = {
     { id: 'expense-gas', name: 'Combustible', amount: 85, kind: 'variable', category: 'Transporte', date: `${currentMonth}-05` },
   ],
   goals: [
-    { id: 'goal-travel', name: 'Viaje a Japón', target: 4000, saved: 2400, monthly: 250, color: '#d893a5' },
-    { id: 'goal-emergency', name: 'Fondo de emergencia', target: 6000, saved: 3250, monthly: 350, color: '#8b9d89' },
+    { id: 'goal-travel', name: 'Viaje a Japón', target: 4000, saved: 2400, monthly: 250, color: '#36a58b' },
+    { id: 'goal-emergency', name: 'Fondo de emergencia', target: 6000, saved: 3250, monthly: 350, color: '#087f46' },
   ],
   savingsAmount: 600,
 };

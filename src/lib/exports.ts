@@ -90,9 +90,9 @@ function exportPdf(data: ReportData): void {
   const newPage = () => { pdf.addPage(); y = 22; };
   const ensureRoom = (height: number) => { if (y + height > pageHeight - 22) newPage(); };
 
-  pdf.setFillColor(27, 62, 52);
+  pdf.setFillColor(8, 127, 70);
   pdf.rect(0, 0, pageWidth, 5, 'F');
-  pdf.setTextColor(27, 62, 52);
+  pdf.setTextColor(23, 63, 45);
   pdf.setFont('helvetica', 'bold');
   pdf.setFontSize(22);
   const titleLines = pdf.splitTextToSize(data.title, width);
@@ -100,14 +100,14 @@ function exportPdf(data: ReportData): void {
   y += titleLines.length * 9;
   pdf.setFont('helvetica', 'normal');
   pdf.setFontSize(11);
-  pdf.setTextColor(102, 113, 108);
+  pdf.setTextColor(91, 118, 103);
   pdf.text(`Periodo: ${data.period}`, margin, y);
   y += 7;
   pdf.text(`Generado: ${new Date().toLocaleDateString('es-NI')}`, margin, y);
   y += 14;
 
   pdf.setFont('helvetica', 'bold');
-  pdf.setTextColor(27, 62, 52);
+  pdf.setTextColor(23, 63, 45);
   pdf.setFontSize(13);
   pdf.text('Resumen financiero', margin, y);
   y += 8;
@@ -118,10 +118,10 @@ function exportPdf(data: ReportData): void {
     ensureRoom(height);
     pdf.setFontSize(10);
     pdf.setFont('helvetica', 'normal');
-    pdf.setTextColor(95, 105, 100);
+    pdf.setTextColor(91, 118, 103);
     pdf.text(labels, margin, y);
     pdf.setFont('helvetica', 'bold');
-    pdf.setTextColor(27, 62, 52);
+    pdf.setTextColor(23, 63, 45);
     pdf.text(values, margin + width, y, { align: 'right' });
     y += height;
   }
@@ -142,11 +142,11 @@ function exportPdf(data: ReportData): void {
     const headerLines = headers.map((header) => pdf.splitTextToSize(header, columnWidth - 4));
     const headerHeight = Math.max(...headerLines.map((lines: string[]) => lines.length)) * 4 + 6;
     const drawHeader = () => {
-      pdf.setFillColor(235, 241, 237);
+      pdf.setFillColor(232, 247, 239);
       pdf.rect(margin, y, width, headerHeight, 'F');
       pdf.setFont('helvetica', 'bold');
       pdf.setFontSize(8);
-      pdf.setTextColor(27, 62, 52);
+      pdf.setTextColor(23, 63, 45);
       headerLines.forEach((lines: string[], index: number) => pdf.text(lines, margin + index * columnWidth + 2, y + 5));
       y += headerHeight;
     };
@@ -164,12 +164,12 @@ function exportPdf(data: ReportData): void {
         const chunkLines = Math.min(maxLines, lines - line);
         const rowHeight = chunkLines * 4 + 5;
         if (rowIndex % 2 === 0) {
-          pdf.setFillColor(249, 250, 249);
+          pdf.setFillColor(243, 250, 246);
           pdf.rect(margin, y, width, rowHeight, 'F');
         }
         pdf.setFont('helvetica', 'normal');
         pdf.setFontSize(8);
-        pdf.setTextColor(53, 64, 58);
+        pdf.setTextColor(65, 94, 78);
         cells.forEach((cell, index) => {
           const chunk = cell.slice(line, line + chunkLines);
           if (chunk.length) pdf.text(chunk, margin + index * columnWidth + 2, y + 5);
@@ -185,7 +185,7 @@ function exportPdf(data: ReportData): void {
     pdf.setPage(page);
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(8);
-    pdf.setTextColor(125, 134, 129);
+    pdf.setTextColor(91, 118, 103);
     pdf.text('Informe personal · KONTEN', margin, pageHeight - 11);
     pdf.text(`${page} / ${pageCount}`, pageWidth - margin, pageHeight - 11, { align: 'right' });
   }
@@ -195,15 +195,21 @@ function exportPdf(data: ReportData): void {
 async function exportDocx(data: ReportData): Promise<void> {
   const headers = headersFor(data.rows);
   const cell = (text: string, header = false) => new TableCell({
-    shading: header ? { fill: 'EBF1ED' } : undefined,
+    shading: header ? { fill: 'E8F7EF' } : undefined,
     margins: { top: 100, bottom: 100, left: 100, right: 100 },
-    children: [new Paragraph({ children: [new TextRun({ text, bold: header, size: 20, color: header ? '1B3E34' : '35403A' })] })],
+    children: [new Paragraph({ children: [new TextRun({ text, bold: header, size: 20, color: header ? '173F2D' : '415E4E' })] })],
   });
   const document = new Document({
     creator: 'KONTEN',
     title: data.title,
     description: `Informe financiero: ${data.period}`,
-    styles: { default: { document: { run: { font: 'Calibri', size: 22, color: '35403A' } } } },
+    styles: {
+      default: {
+        document: { run: { font: 'Calibri', size: 22, color: '415E4E' } },
+        title: { run: { color: '087F46' } },
+        heading1: { run: { color: '173F2D' } },
+      },
+    },
     sections: [{
       properties: { page: { margin: { top: 1000, right: 1000, bottom: 1000, left: 1000 } } },
       children: [
@@ -239,7 +245,7 @@ export async function exportDashboard(element: HTMLElement): Promise<void> {
   await document.fonts.ready;
   const dataUrl = await toPng(element, {
     pixelRatio: 2,
-    backgroundColor: '#f7f9f6',
+    backgroundColor: '#f3faf6',
     filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore === 'true'),
   });
   const response = await fetch(dataUrl);
