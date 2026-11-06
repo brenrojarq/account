@@ -33,5 +33,5 @@ if (/<(?:script|link)\b[^>]*(?:src|href)="(?:\.\/)?assets\//.test(html)) {
 }
 const downloads = resolve(root, 'downloads');
 await mkdir(downloads, { recursive: true });
-await writeFile(resolve(downloads, 'Balance.html'), html);
-console.log('Portable app: downloads/Balance.html');
+await writeFile(resolve(downloads, 'KONTEN.html'), html);
+console.log('Portable app: downloads/KONTEN.html');

@@ -1,5 +1,5 @@
 {
-  "name": "balance-finanzas",
+  "name": "konten-finanzas",
   "version": "1.0.0",
   "description": "Finanzas personales claras: ingresos, gastos, ahorro y un dashboard personalizable.",
   "main": "index.js",

@@ -5,7 +5,7 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 import * as XLSX from 'xlsx';
 
-const artifact = resolve('downloads/Balance.html');
+const artifact = resolve('downloads/KONTEN.html');
 
 test('el HTML portátil se puede abrir directamente como archivo', async ({ page, context }) => {
   test.skip(!existsSync(artifact), 'Genera primero el HTML con npm run build:portable.');

@@ -1,4 +1,4 @@
-# Balance
+# KONTEN
 
 Una aplicación de finanzas personales en español. Organiza ingresos, compromisos, compras y ahorro en un espacio visual, sin conexiones bancarias.
 
@@ -26,11 +26,11 @@ Las pruebas E2E usan `/usr/bin/chromium` si existe; en otro entorno ejecuta `npx
 
 El servidor interno del entorno de desarrollo no tiene un enlace público. Para acceder desde otro dispositivo hay que publicar la compilación en un alojamiento HTTPS. Publicar el entorno de Codex y publicar esta web son operaciones diferentes.
 
-La aplicación está preparada para GitHub Pages: sube el proyecto al repositorio, selecciona **GitHub Actions** como fuente en **Settings → Pages** y ejecuta manualmente **Publicar Balance en GitHub Pages** desde Actions. El workflow no se ejecuta al guardar ni al hacer push. GitHub mostrará el enlace cuando termine el despliegue; la disponibilidad de Pages en repositorios privados depende del plan y permisos de la cuenta.
+La aplicación está preparada para GitHub Pages: sube el proyecto al repositorio, selecciona **GitHub Actions** como fuente en **Settings → Pages** y ejecuta manualmente **Publicar KONTEN en GitHub Pages** desde Actions. El workflow no se ejecuta al guardar ni al hacer push. GitHub mostrará el enlace cuando termine el despliegue; la disponibilidad de Pages en repositorios privados depende del plan y permisos de la cuenta.
 
 También puedes subir el contenido de `dist/` a un alojamiento estático. Las rutas relativas funcionan tanto en un dominio propio como bajo un subdirectorio.
 
-Para generar una entrega de un solo archivo, ejecuta `npm run build:portable`: crea `downloads/Balance.html` con JavaScript, estilos, tipografías y exportadores incluidos. Ese archivo puede publicarse como `index.html` en un alojamiento estático. El uso directo con `file://` depende de la política del navegador y no sustituye una web HTTPS para el celular.
+Para generar una entrega de un solo archivo, ejecuta `npm run build:portable`: crea `downloads/KONTEN.html` con JavaScript, estilos, tipografías y exportadores incluidos. Ese archivo puede publicarse como `index.html` en un alojamiento estático. El uso directo con `file://` depende de la política del navegador y no sustituye una web HTTPS para el celular.
 
 ## Funciones
 

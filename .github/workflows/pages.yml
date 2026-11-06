@@ -1,4 +1,4 @@
-name: Publicar Balance en GitHub Pages
+name: Publicar KONTEN en GitHub Pages
 
 on:
   workflow_dispatch:

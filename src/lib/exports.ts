@@ -24,7 +24,7 @@ export interface ReportData {
 }
 
 function fileName(value: string): string {
-  return value.replace(/[\\/:*?"<>|]/g, '-').trim() || 'mis-finanzas';
+  return value.replace(/[\\/:*?"<>|]/g, '-').trim() || 'konten';
 }
 
 function download(blob: Blob, name: string): void {
@@ -81,6 +81,7 @@ export function exportTable(
 
 function exportPdf(data: ReportData): void {
   const pdf = new jsPDF({ unit: 'mm', format: 'a4' });
+  pdf.setProperties({ title: data.title, author: 'KONTEN', creator: 'KONTEN', subject: `Informe financiero: ${data.period}` });
   const margin = 18;
   const pageWidth = pdf.internal.pageSize.getWidth();
   const pageHeight = pdf.internal.pageSize.getHeight();
@@ -185,7 +186,7 @@ function exportPdf(data: ReportData): void {
     pdf.setFont('helvetica', 'normal');
     pdf.setFontSize(8);
     pdf.setTextColor(125, 134, 129);
-    pdf.text('Informe personal · Mis finanzas', margin, pageHeight - 11);
+    pdf.text('Informe personal · KONTEN', margin, pageHeight - 11);
     pdf.text(`${page} / ${pageCount}`, pageWidth - margin, pageHeight - 11, { align: 'right' });
   }
   pdf.save(`${fileName(data.title)}.pdf`);
@@ -199,7 +200,7 @@ async function exportDocx(data: ReportData): Promise<void> {
     children: [new Paragraph({ children: [new TextRun({ text, bold: header, size: 20, color: header ? '1B3E34' : '35403A' })] })],
   });
   const document = new Document({
-    creator: 'Mis finanzas',
+    creator: 'KONTEN',
     title: data.title,
     description: `Informe financiero: ${data.period}`,
     styles: { default: { document: { run: { font: 'Calibri', size: 22, color: '35403A' } } } },
@@ -222,7 +223,7 @@ async function exportDocx(data: ReportData): Promise<void> {
             ...data.rows.map((row) => new TableRow({ children: headers.map((header) => cell(String(row[header] ?? ''))) })),
           ],
         })] : [new Paragraph('No hay movimientos en este periodo.')]),
-        new Paragraph({ text: 'Informe personal · Mis finanzas', alignment: AlignmentType.RIGHT, spacing: { before: 400 } }),
+        new Paragraph({ text: 'Informe personal · KONTEN', alignment: AlignmentType.RIGHT, spacing: { before: 400 } }),
       ],
     }],
   });
@@ -242,5 +243,5 @@ export async function exportDashboard(element: HTMLElement): Promise<void> {
     filter: (node) => !(node instanceof HTMLElement && node.dataset.exportIgnore === 'true'),
   });
   const response = await fetch(dataUrl);
-  download(await response.blob(), `dashboard-${new Date().toISOString().slice(0, 10)}.png`);
+  download(await response.blob(), `konten-dashboard-${new Date().toISOString().slice(0, 10)}.png`);
 }
