@@ -1,0 +1,7 @@
+node_modules/
+dist/
+dist-portable/
+downloads/
+test-results/
+playwright-report/
+*.local
