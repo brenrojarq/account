@@ -1,35 +1,35 @@
 # Publicar Balance
 
-El sitio es estático. La publicación del entorno de Codex no publica la web.
+El sitio es estático. Publicar el entorno de Codex conserva el entorno de desarrollo; la web se publica por separado.
 
-## Estado comprobado
+## Validación y privacidad
 
-- El proyecto compila y las 10 pruebas financieras pasan.
-- `brenrojarq/account` es privado y está vacío en GitHub.
-- La conexión integrada permite consultar el repositorio, pero GitHub rechaza crear o administrar Pages con HTTP 403: `Resource not accessible by integration`.
-- La red del entorno debe permitir `github.com` para Git, `registry.npmjs.org` para instalar dependencias, `api.github.com` para configurar el despliegue y `brenrojarq.github.io` para comprobar el sitio.
+El proyecto compila y las 10 pruebas financieras pasan. Los archivos versionados contienen código y datos de ejemplo; los registros financieros del usuario se guardan en el navegador. No se deben incluir tokens, archivos de credenciales ni exportaciones personales en los commits.
 
-## Credencial que falta
+Para GitHub Pages gratuito, esta cuenta requiere un repositorio público. El usuario autorizó hacer público `brenrojarq/account` el 6 de noviembre de 2026. Esa autorización incluye publicar el código y su historial, no registros personales ni credenciales.
 
-Introduce un token de GitHub con alcance únicamente al repositorio `brenrojarq/account` en el secreto **BALANCE_DEPLOY_TOKEN** de la configuración del entorno. No lo pegues en el chat ni lo añadas a archivos del repositorio.
+## Autenticación del entorno
 
-Para el workflow de publicación ya preparado, el token de acceso detallado necesita:
+La conexión `chatgpt-codex-connector` tiene permisos de escritura en Contents, Workflows y Actions. Permite subir el código y ejecutar el workflow. No tiene permisos de administración del repositorio ni de Pages: GitHub devuelve HTTP 403 al intentar cambiar la visibilidad o configurar Pages desde esta integración.
 
-- **Contents: Read and write**, para subir el proyecto.
-- **Workflows: Read and write**, para subir `.github/workflows/pages.yml`.
-- **Actions: Read and write**, para ejecutar y consultar el workflow manual.
-- **Pages: Read and write**, para habilitar Pages y consultar el despliegue.
+El secreto `BALANCE_DEPLOY_TOKEN` está configurado, pero las consultas HTTPS comprobadas siguen autenticándose mediante la integración de Codex. Crear otro token o ampliar repetidamente sus permisos no resuelve este bloqueo. No desactives el proxy ni la verificación TLS para evitarlo.
 
-No se necesita cambiar la visibilidad del repositorio. GitHub Pages en un repositorio privado requiere un plan que lo admita. Si GitHub informa que el plan no lo permite, no conviertas el repositorio en público automáticamente: utiliza otro alojamiento autorizado o solicita esa decisión al usuario.
+## Habilitación inicial por el propietario
 
-## Continuar cuando exista acceso
+Estas operaciones deben hacerse desde la sesión de GitHub del propietario cuando la integración no tenga permisos:
 
-1. Comprueba la presencia del secreto sin imprimir su valor y selecciona esa credencial solo para las operaciones de despliegue. Conserva el proxy y la verificación TLS del entorno.
-2. Vuelve a consultar las ramas remotas. Si apareció trabajo nuevo, intégralo sin sobrescribirlo ni usar force push.
-3. Sube el commit local con el proyecto a `main` de `brenrojarq/account`.
-4. Habilita GitHub Pages con `build_type: workflow`.
-5. Ejecuta manualmente `.github/workflows/pages.yml` sobre `main`. El workflow no publica automáticamente al hacer push.
-6. Espera al resultado y consulta la URL devuelta por GitHub. No presentes la URL esperada como un sitio existente antes de comprobarla.
-7. Abre la URL HTTPS, verifica el dashboard y una exportación en una vista móvil y comparte únicamente el enlace que se haya verificado.
+1. En **Settings → General → Danger Zone → Change repository visibility**, cambia `brenrojarq/account` a **Public**, conforme a la autorización indicada.
+2. En **Settings → Pages → Build and deployment → Source**, selecciona **GitHub Actions**.
 
-Los registros personales permanecen en el navegador. El sitio publicado contiene la aplicación y los datos de ejemplo, sin credenciales ni registros financieros del usuario.
+Si la visibilidad ya es pública o Pages ya está configurado, conserva el estado existente en lugar de repetir cambios.
+
+## Desplegar y verificar
+
+1. Consulta las ramas remotas antes de subir cambios. Integra cualquier trabajo nuevo sin sobrescribirlo ni usar force push.
+2. Ejecuta `npm run build` y `npm test` desde `/workspace/account` para cambios de código.
+3. Sube el commit a `main` mediante el proxy HTTPS de Git existente. No extraigas sus credenciales.
+4. Con Pages habilitado, ejecuta manualmente `.github/workflows/pages.yml` sobre `main`. El workflow no publica automáticamente al hacer push.
+5. Espera a que el workflow termine. Obtén la URL de su despliegue o entorno `github-pages`; si la API de Pages sigue restringida, consulta los resultados de Actions.
+6. Verifica la URL HTTPS desde fuera del servidor de desarrollo: dashboard, navegación móvil y una exportación. Comparte el enlace solo cuando esté comprobado.
+
+El workflow instala dependencias mediante `npm ci`, ejecuta pruebas y compilación, y publica `dist/`. La configuración relativa de Vite permite alojar la app bajo `/account/`.
