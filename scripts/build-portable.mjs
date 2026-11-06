@@ -6,9 +6,20 @@ import { resolve } from 'node:path';
 // Opening the normal Vite dist/index.html via file:// cannot load module chunks.
 const root = resolve(import.meta.dirname, '..');
 const output = resolve(root, 'dist-portable');
+const icon = await readFile(resolve(root, 'src/assets/konten-logo.png'));
+const iconDataUrl = `data:image/png;base64,${icon.toString('base64')}`;
 await build({
   root,
+  mode: 'portable',
   base: './',
+  plugins: [{
+    name: 'portable-inline-icons',
+    // HTML icons otherwise become image entries, which Vite keeps external.
+    transformIndexHtml: {
+      order: 'pre',
+      handler: (html) => html.replaceAll('/src/assets/konten-logo.png', iconDataUrl),
+    },
+  }],
   build: {
     outDir: output,
     assetsInlineLimit: Number.MAX_SAFE_INTEGER,

@@ -4,6 +4,14 @@ Una aplicación de finanzas personales en español. Organiza ingresos, compromis
 
 El logo de KONTEN es el personaje de la billetera verde, guardado en `src/assets/konten-logo.png`. Se usa en el menú lateral, la pestaña del navegador y el icono para añadir la web a la pantalla de inicio. Para sustituirlo, reemplaza ese archivo y vuelve a compilar y desplegar; Vite genera una nueva URL del recurso para actualizar su caché.
 
+## Instalar en el celular
+
+Abre https://brenrojarq.github.io/account/ en el navegador del celular. En Chrome para Android puedes usar **Mis finanzas → Instalar KONTEN** cuando el navegador ofrezca la instalación, o su menú **Instalar aplicación**. En iPhone o iPad usa Safari: **Compartir → Añadir a pantalla de inicio**. Los navegadores integrados en otras apps pueden impedir la instalación; en ese caso abre el enlace en Chrome o Safari.
+
+La primera carga requiere internet. Una vez preparado el acceso sin conexión, la aplicación puede abrirse, registrar movimientos y exportar archivos sin red. Los datos siguen guardados en el navegador de ese dispositivo. Las nuevas versiones muestran un botón para actualizar; no se recargan formularios automáticamente.
+
+`npm run test:pwa` compila y verifica en Chromium el manifest y el icono, el scope `/account/`, los registros y cinco exportaciones sin conexión, y el flujo de instalación cancelada. Usa un perfil normal para comprobar los requisitos de instalación, ya que los navegadores impiden instalar desde modo incógnito.
+
 ## Desarrollo
 
 Requisitos: Node.js 22.12 o superior (probado con 24.22) y npm.
