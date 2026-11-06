@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, type ReactNode } from 'react';
+import kontenLogo from './assets/konten-logo.png';
 import { ArrowDown, ArrowDownLeft, ArrowDownToLine, ArrowRight, ArrowUpRight, Bell, CalendarDays, Check, CheckCheck, ChevronDown, ChevronLeft, ChevronRight, CircleHelp, Coffee, Download, Ellipsis, FileBarChart2, FileSpreadsheet, FileText, GraduationCap, House, LayoutDashboard, Menu, MoreHorizontal, Pencil, PiggyBank, Plus, Search, Settings2, ShieldCheck, ShoppingBag, SlidersHorizontal, Sparkles, Target, Trash2, TrendingUp, Wallet, X, BriefcaseBusiness, Car, Heart, Plane, Utensils, CircleDollarSign, ArrowLeftRight, ChartNoAxesCombined, ChartPie, ChartColumnIncreasing } from 'lucide-react';
 import { Area, AreaChart, Bar, BarChart, CartesianGrid, Cell, Pie, PieChart, ResponsiveContainer, Scatter, ScatterChart, Tooltip, XAxis, YAxis } from 'recharts';
 import { calculateSummary, categoryTotals, monthlyTrend, initialData, categories, categoryColors, frequencyLabels, incomeInMonth, expenseInMonth, type FinanceData, type Income, type Expense, type SavingsGoal } from './lib/finance';
@@ -85,7 +86,7 @@ function App() {
   return <div className="app-shell">
     {sidebarOpen && <div className="sidebar-backdrop" onClick={() => setSidebarOpen(false)} />}
     <aside className={`sidebar ${sidebarOpen ? 'open' : ''}`}>
-      <a className="brand" href="#" onClick={e => { e.preventDefault(); navigate('overview'); }} aria-label="KONTEN, inicio"><span className="brand-symbol"><i /><i /><i /></span>KONTEN<span className="brand-dot" aria-hidden="true">.</span></a>
+      <a className="brand" href="#" onClick={e => { e.preventDefault(); navigate('overview'); }} aria-label="KONTEN, inicio"><img className="brand-logo" src={kontenLogo} alt="" width="44" height="44" />KONTEN<span className="brand-dot" aria-hidden="true">.</span></a>
       <button className="workspace-selector" onClick={() => setModal({ type: 'settings' })}><span className="workspace-avatar"><Wallet size={18} /></span><span><strong>Mis finanzas</strong><small>Espacio personal</small></span><ChevronDown size={15} /></button>
       <span className="nav-label">TU ESPACIO</span>
       <nav>{([['overview', LayoutDashboard, 'Resumen general'], ['transactions', ArrowLeftRight, 'Movimientos'], ['budget', Wallet, 'Mi presupuesto'], ['goals', Target, 'Metas de ahorro'], ['reports', FileBarChart2, 'Informes']] as const).map(([key, Icon, label]) => <button key={key} className={`nav-item ${page === key ? 'active' : ''}`} onClick={() => navigate(key)}><Icon size={19} strokeWidth={1.7} /><span>{label}</span>{page === key && <span className="nav-active-dot" />}</button>)}</nav>

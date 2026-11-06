@@ -2,6 +2,8 @@
 
 Una aplicación de finanzas personales en español. Organiza ingresos, compromisos, compras y ahorro en un espacio visual, sin conexiones bancarias.
 
+El logo de KONTEN es el personaje de la billetera verde, guardado en `src/assets/konten-logo.png`. Se usa en el menú lateral, la pestaña del navegador y el icono para añadir la web a la pantalla de inicio. Para sustituirlo, reemplaza ese archivo y vuelve a compilar y desplegar; Vite genera una nueva URL del recurso para actualizar su caché.
+
 ## Desarrollo
 
 Requisitos: Node.js 22.12 o superior (probado con 24.22) y npm.
