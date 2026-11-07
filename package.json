@@ -10,7 +10,7 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --import tsx tests/finance.test.ts",
+    "test": "node --import tsx tests/finance.test.ts && node --import tsx tests/currency.test.ts && node --import tsx tests/backup.test.ts",
     "test:e2e": "playwright test",
     "build:portable": "tsc --noEmit && node scripts/build-portable.mjs",
     "test:pwa": "npm run build && playwright test --config=playwright.pwa.config.ts"
