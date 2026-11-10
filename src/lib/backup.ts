@@ -256,3 +256,23 @@ export function restoreBackup(backup: unknown, storage: BackupStorage): void {
       : 'El almacenamiento falló y no se pudo deshacer toda la restauración. Conservá ambos respaldos y no cierres esta pantalla antes de guardarlos.');
   }
 }
+
+/** Account restores must never overwrite another, unconnected device workspace. */
+export function restoreBackupRateCaches(backup: KontenBackup, storage: BackupStorage): void {
+  const validated = validateBackup(backup);
+  const previous = (['buy', 'sell'] as const).map(type => ({ type, value: storage.getItem(BACKUP_STORAGE_KEYS[type]) }));
+  try {
+    for (const { type } of previous) {
+      const rate = validated.rates?.[type];
+      if (rate) storage.setItem(BACKUP_STORAGE_KEYS[type], JSON.stringify(rate));
+      else storage.removeItem(BACKUP_STORAGE_KEYS[type]);
+    }
+  } catch {
+    let rolledBack = true;
+    for (const { type, value } of previous) {
+      try { if (value === null) storage.removeItem(BACKUP_STORAGE_KEYS[type]); else storage.setItem(BACKUP_STORAGE_KEYS[type], value); }
+      catch { rolledBack = false; }
+    }
+    throw new Error(rolledBack ? 'No se pudieron guardar las referencias de cambio. No se aplicó el respaldo.' : 'El almacenamiento falló al restaurar las referencias de cambio. Conservá el respaldo para volver a intentarlo.');
+  }
+}

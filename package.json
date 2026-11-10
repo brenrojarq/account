@@ -10,10 +10,12 @@
     "dev": "vite",
     "build": "tsc --noEmit && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --import tsx tests/finance.test.ts && node --import tsx tests/currency.test.ts && node --import tsx tests/backup.test.ts",
+    "test": "node --import tsx tests/finance.test.ts && node --import tsx tests/currency.test.ts && node --import tsx tests/backup.test.ts && node --import tsx tests/syncModel.test.ts && node --import tsx tests/syncEngine.test.ts",
     "test:e2e": "playwright test",
     "build:portable": "tsc --noEmit && node scripts/build-portable.mjs",
-    "test:pwa": "npm run build && playwright test --config=playwright.pwa.config.ts"
+    "test:pwa": "npm run build && playwright test --config=playwright.pwa.config.ts",
+    "test:sync": "playwright test --config=playwright.sync.config.ts",
+    "test:sql": "node supabase/tests/private_sync.mjs"
   },
   "repository": {
     "type": "git",
@@ -30,6 +32,7 @@
   "dependencies": {
     "@fontsource-variable/dm-sans": "^5.3.0",
     "@fontsource-variable/manrope": "^5.3.0",
+    "@supabase/supabase-js": "^2.119.0",
     "docx": "^9.15.2",
     "html-to-image": "^1.11.13",
     "jspdf": "^4.2.1",
@@ -41,6 +44,7 @@
   },
   "private": true,
   "devDependencies": {
+    "@electric-sql/pglite": "^0.5.16",
     "@playwright/test": "^1.65.0",
     "@types/react": "^19.3.0",
     "@types/react-dom": "^19.3.0",

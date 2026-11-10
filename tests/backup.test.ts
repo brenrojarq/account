@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {
-  BACKUP_STORAGE_KEYS, createBackup, parseBackup, readBackupRates, restoreBackup, serializeBackup,
+  BACKUP_STORAGE_KEYS, createBackup, parseBackup, readBackupRates, restoreBackup, restoreBackupRateCaches, serializeBackup,
   type BackupFinanceData, type KontenBackup,
 } from '../src/lib/backup.ts';
 import type { CurrencyRateSnapshot } from '../src/lib/currency.ts';
@@ -48,6 +48,19 @@ function fixture(): KontenBackup {
     sell: { ...rate }, buy: { ...rate, rateType: 'buy', provider: 'BAC', dateKind: 'observed', sourceUrl: 'https://example.com/public-rates' },
   }, now);
 }
+
+test('account restore updates public rate references without overwriting the unconnected device workspace', () => {
+  const storage = new MemoryStorage([[BACKUP_STORAGE_KEYS.data, 'preserved-device-records'], [BACKUP_STORAGE_KEYS.preferences, 'preserved-device-preferences']]);
+  const backup = fixture();
+  restoreBackupRateCaches(backup, storage);
+  assert.equal(storage.getItem(BACKUP_STORAGE_KEYS.data), 'preserved-device-records');
+  assert.equal(storage.getItem(BACKUP_STORAGE_KEYS.preferences), 'preserved-device-preferences');
+  assert.deepEqual(JSON.parse(storage.getItem(BACKUP_STORAGE_KEYS.sell)!), backup.rates!.sell);
+  const prior = new Map(storage.values);
+  storage.failAt = storage.writes + 2;
+  assert.throws(() => restoreBackupRateCaches({ ...backup, rates: undefined }, storage), /No se pudieron guardar/);
+  assert.deepEqual(storage.values, prior);
+});
 
 test('complete backup round trip preserves original USD, NIO, EUR amounts and captured rates', () => {
   const original = structuredClone(data);

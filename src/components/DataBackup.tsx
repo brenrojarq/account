@@ -8,10 +8,13 @@ import {
 interface DataBackupPanelProps {
   data: BackupFinanceData;
   preferences: unknown;
+  cloud?: boolean;
+  disabled?: boolean;
+  onRestore?: (backup: KontenBackup) => void;
 }
 
 /** Complete local transfer; no account, server, or automatic synchronization. */
-export function DataBackupPanel({ data, preferences }: DataBackupPanelProps) {
+export function DataBackupPanel({ data, preferences, cloud = false, disabled = false, onRestore }: DataBackupPanelProps) {
   const fileId = useId();
   const [pending, setPending] = useState<{ filename: string; backup: KontenBackup } | null>(null);
   const [confirmed, setConfirmed] = useState(false);
@@ -65,11 +68,19 @@ export function DataBackupPanel({ data, preferences }: DataBackupPanelProps) {
   }
 
   function restoreSelected() {
-    if (!pending || !confirmed || restoring) return;
+    if (!pending || !confirmed || restoring || disabled) return;
     setError('');
     setFeedback('');
     setRestoring(true);
     try {
+      if (onRestore) {
+        onRestore(pending.backup);
+        setPending(null);
+        setConfirmed(false);
+        setRestoring(false);
+        setFeedback('Respaldo cargado. Sus cambios quedan pendientes hasta que la cuenta confirme la sincronización.');
+        return;
+      }
       restoreBackup(pending.backup, window.localStorage);
     } catch (problem) {
       setRestoring(false);
@@ -90,13 +101,13 @@ export function DataBackupPanel({ data, preferences }: DataBackupPanelProps) {
   return <section className="backup-panel" aria-label="Respaldo y traslado de datos">
     <div className="backup-heading"><FileJson size={23} aria-hidden="true" /><div>
       <h3>Respaldo y traslado de datos</h3>
-      <p>Tus registros se guardan en este navegador. Descargá un respaldo en el celular y restauralo en la computadora, o al revés. El traslado es manual; los dispositivos no se sincronizan automáticamente.</p>
+      <p>{cloud ? 'Tu cuenta comparte los registros entre dispositivos. Descargá también un respaldo completo para conservar una copia independiente.' : 'Tus registros se guardan en este navegador. Descargá un respaldo en el celular y restauralo en la computadora, o al revés. Sin una cuenta conectada, el traslado es manual.'}</p>
     </div></div>
     <p className="backup-privacy">El archivo contiene tus datos financieros, monedas originales, tipos de cambio guardados, metas y preferencias. Guardalo en un lugar privado y trasladalo sólo a dispositivos que controlás.</p>
     <div className="backup-actions">
       <button className="outline-button backup-download" type="button" onClick={downloadCurrent} disabled={restoring}><Download size={15} aria-hidden="true" />Descargar respaldo completo</button>
-      <label className={`backup-file-label${reading || restoring ? ' backup-disabled' : ''}`} htmlFor={fileId}><Upload size={15} aria-hidden="true" />{reading ? 'Revisando archivo…' : 'Elegir respaldo para restaurar'}</label>
-      <input className="backup-file-input" id={fileId} aria-label="Elegir respaldo para restaurar" type="file" accept=".json,application/json" onChange={selectFile} disabled={reading || restoring} />
+      <label className={`backup-file-label${reading || restoring || disabled ? ' backup-disabled' : ''}`} htmlFor={fileId}><Upload size={15} aria-hidden="true" />{reading ? 'Revisando archivo…' : 'Elegir respaldo para restaurar'}</label>
+      <input className="backup-file-input" id={fileId} aria-label="Elegir respaldo para restaurar" type="file" accept=".json,application/json" onChange={selectFile} disabled={reading || restoring || disabled} />
     </div>
     {preview && <div className="backup-preview" aria-label="Vista previa del respaldo">
       <h4>Vista previa del respaldo</h4>
@@ -109,11 +120,11 @@ export function DataBackupPanel({ data, preferences }: DataBackupPanelProps) {
       </dl>
       <p>Monedas de los registros: {currencies.join(', ')}. Ahorro reservado: {preview.data.savingsAmount.toLocaleString('es-NI', { maximumFractionDigits: 2 })} {preview.data.savingsCurrency ?? preview.data.legacyCurrency ?? preview.data.legacyCurrencyReview ?? '(moneda por confirmar)'}.</p>
       {preview.data.legacyCurrencyReview && <p>La moneda original de registros anteriores sigue pendiente de confirmación en Ajustes ({preview.data.legacyCurrencyReview}).</p>}
-      <div className="backup-replace-warning"><AlertTriangle size={17} aria-hidden="true" /><p>Restaurar reemplaza todos los ingresos, egresos, metas, ahorro y preferencias de este navegador. No combina registros. Descargá primero tus datos actuales si querés conservarlos.</p></div>
+      <div className="backup-replace-warning"><AlertTriangle size={17} aria-hidden="true" /><p>{cloud ? 'Restaurar reemplaza los ingresos, egresos, metas, ahorro y preferencias de tu cuenta. Cuando se sincronice, el reemplazo también llegará a tus otros dispositivos. No combina registros. Descargá primero tus datos actuales si querés conservarlos.' : 'Restaurar reemplaza todos los ingresos, egresos, metas, ahorro y preferencias de este navegador. No combina registros. Descargá primero tus datos actuales si querés conservarlos.'}</p></div>
       <button className="text-button backup-save-current" type="button" onClick={downloadCurrent} disabled={restoring}><Download size={14} aria-hidden="true" />Descargar mis datos actuales antes de reemplazarlos</button>
-      <label className="backup-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} disabled={restoring} /><span>Confirmo que quiero reemplazar los datos de este navegador con este respaldo.</span></label>
+      <label className="backup-confirm"><input type="checkbox" checked={confirmed} onChange={event => setConfirmed(event.target.checked)} disabled={restoring || disabled} /><span>{cloud ? 'Confirmo que quiero reemplazar los datos de mi cuenta con este respaldo en todos mis dispositivos.' : 'Confirmo que quiero reemplazar los datos de este navegador con este respaldo.'}</span></label>
       <div className="backup-restore-actions">
-        <button className="primary-button" type="button" onClick={restoreSelected} disabled={!confirmed || restoring}>{restoring ? 'Restaurando…' : 'Restaurar este respaldo'}</button>
+        <button className="primary-button" type="button" onClick={restoreSelected} disabled={!confirmed || restoring || disabled}>{restoring ? 'Restaurando…' : 'Restaurar este respaldo'}</button>
         <button className="text-button" type="button" onClick={() => { setPending(null); setConfirmed(false); }} disabled={restoring}>Cancelar</button>
       </div>
     </div>}

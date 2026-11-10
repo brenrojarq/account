@@ -38,6 +38,21 @@ export function useExchangeRates(rateType: RateType) {
     setStorageWarning(!persisted);
   }, []);
 
+  useEffect(() => {
+    const restore = () => {
+      controller.current?.abort();
+      generation.current++;
+      const restored = { buy: loadCachedRates('buy'), sell: loadCachedRates('sell') };
+      memory.current = restored;
+      setSnapshots(restored);
+      setLoading(false);
+      setError(null);
+      setStorageWarning(false);
+    };
+    window.addEventListener('konten:rates-restored', restore);
+    return () => window.removeEventListener('konten:rates-restored', restore);
+  }, []);
+
   const refresh = useCallback(async () => {
     const requestedType = rateType;
     attempted.current.add(requestedType);
