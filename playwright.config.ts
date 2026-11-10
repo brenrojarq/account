@@ -4,7 +4,7 @@ import { existsSync } from 'node:fs';
 export default defineConfig({
   testDir: './tests',
   testMatch: '**/*.spec.ts',
-  testIgnore: '**/pwa.spec.ts',
+  testIgnore: ['**/pwa.spec.ts', '**/sync.spec.ts'],
   fullyParallel: true,
   workers: 2,
   timeout: 45_000,

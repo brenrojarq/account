@@ -8,7 +8,7 @@ El logo de KONTEN es el personaje de la billetera verde, guardado en `src/assets
 
 Abre https://brenrojarq.github.io/account/ en el navegador del celular. En Chrome para Android puedes usar **Mis finanzas → Instalar KONTEN** cuando el navegador ofrezca la instalación, o su menú **Instalar aplicación**. En iPhone o iPad usa Safari: **Compartir → Añadir a pantalla de inicio**. Los navegadores integrados en otras apps pueden impedir la instalación; en ese caso abre el enlace en Chrome o Safari.
 
-La primera carga requiere internet. Una vez preparado el acceso sin conexión, la aplicación puede abrirse, registrar movimientos y exportar archivos sin red. Los datos siguen guardados en el navegador de ese dispositivo. Las nuevas versiones muestran un botón para actualizar; no se recargan formularios automáticamente.
+La primera carga requiere internet. Una vez preparado el acceso sin conexión, la aplicación puede abrirse, registrar movimientos y exportar archivos sin red. Sin una cuenta conectada, los datos siguen guardados en el navegador de ese dispositivo. Con una cuenta configurada se mantiene una copia local y se sincronizan los cambios al recuperar conexión mientras KONTEN está abierto. Las nuevas versiones muestran un botón para actualizar; no se recargan formularios automáticamente.
 
 `npm run test:pwa` compila y verifica en Chromium el manifest y el icono, el scope `/account/`, los registros y cinco exportaciones sin conexión, y el flujo de instalación cancelada. Usa un perfil normal para comprobar los requisitos de instalación, ya que los navegadores impiden instalar desde modo incógnito.
 
@@ -27,6 +27,7 @@ El servidor de desarrollo usa el puerto 5173. La primera visita incluye datos de
 npm run build       # TypeScript y compilación de producción
 npm test            # Cálculos financieros y conversión entre monedas
 npm run test:e2e    # Flujos y exportaciones con Playwright
+npm run test:sync   # Dos dispositivos, conflictos y sesión con API simulada
 npm run preview     # Servir la compilación de producción
 ```
 
@@ -75,14 +76,20 @@ Si falta una tasa necesaria, el importe original se puede guardar, pero los tota
 
 ## Llevar los datos a otro dispositivo
 
-El almacenamiento local no sincroniza automáticamente celular y computadora. En **Mis finanzas → Respaldo y traslado de datos**, usa **Descargar respaldo completo** en el dispositivo de origen. Traslada el JSON a tu otro dispositivo y elige **Elegir respaldo para restaurar**. Revisa los conteos y confirma el reemplazo antes de **Restaurar este respaldo**.
+El modo local no sincroniza automáticamente celular y computadora. Con la conexión privada configurada, iniciá sesión con la misma cuenta en ambos dispositivos. En **Mis finanzas → Respaldo y traslado de datos**, usa **Descargar respaldo completo** en el dispositivo de origen. Traslada el JSON a tu otro dispositivo y elige **Elegir respaldo para restaurar**. Revisa los conteos y confirma el reemplazo antes de **Restaurar este respaldo**.
 
 El respaldo incluye importes y monedas originales, tasas capturadas, metas, ahorro, preferencias y las dos referencias públicas de cambio guardadas. No incluye sesiones ni claves de autenticación. La restauración reemplaza los datos del navegador de destino, no combina registros; descarga los datos actuales antes si los necesitas. Archivos inválidos o errores de almacenamiento no aplican cambios parciales: se intenta restaurar el estado anterior y se muestra cualquier error.
 
-La sincronización automática necesita un servicio privado con autenticación. Esta publicación no contiene todavía una conexión de ese tipo: GitHub aloja solamente la aplicación pública, no los registros financieros del usuario.
+La sincronización automática usa Supabase Auth y una base privada con políticas por propietario. GitHub aloja únicamente la aplicación pública. La conexión se habilita cuando se instalan el esquema y las políticas y se configuran la URL y la clave pública del proyecto; valores vacíos mantienen el modo local. Consultá [la guía de Supabase](docs/SUPABASE.md) para terminar esa configuración.
+
+En **Mis finanzas → Tu cuenta y sincronización**, se puede crear una cuenta, confirmar el correo, iniciar sesión y recuperar la contraseña. La primera conexión permite incorporar registros propios del dispositivo o usar los de la cuenta; los ejemplos no se importan y el espacio local anterior se conserva. Cada cuenta mantiene su propia copia y cola local, separadas por proyecto e identificador de usuario. Al cerrar sesión vuelve a mostrarse el espacio local sin conectar.
+
+Los cambios se guardan antes de enviarse y quedan pendientes hasta la confirmación del servidor. Las altas independientes se combinan; dos cambios incompatibles del mismo registro requieren elegir una de las versiones. Se conservan los importes, monedas y tasas originales. Los reintentos de una operación no la aplican dos veces y las eliminaciones llevan un marcador para evitar que reaparezcan desde un dispositivo antiguo. La sincronización ocurre con KONTEN abierto, al volver la conexión, al enfocarlo y mediante sondeo periódico; no promete ejecución con la aplicación cerrada.
+
+Abrir la misma cuenta en dos pestañas del mismo navegador deja la segunda en modo de espera para evitar que compitan por la copia local. Cerrá la primera y volvé a sincronizar en la segunda. Esto no impide usar simultáneamente celular y computadora.
 
 ## Datos y privacidad
 
-Los registros y preferencias se guardan en `localStorage` del navegador. No hay backend, inicio de sesión, sincronización entre dispositivos, pagos automáticos ni acceso bancario. Borrar los datos del sitio elimina los registros; exporta tus movimientos periódicamente. Las exportaciones contienen los datos del mes seleccionado, con importes originales y equivalencias en la moneda del resumen.
+El modo local guarda registros y preferencias en `localStorage`. Con una cuenta conectada, los registros también se guardan en Supabase bajo su propietario, junto a una copia local y operaciones pendientes. No hay pagos automáticos ni acceso bancario. Borrar los datos del sitio elimina los registros locales y cualquier cambio aún sin sincronizar; conservá respaldos completos y comprobá el estado de la cuenta antes. Las exportaciones contienen los datos del mes seleccionado, con importes originales y equivalencias en la moneda del resumen.
 
 Las exportaciones de tablas protegen los textos contra su interpretación como fórmulas de Excel. La aplicación no requiere claves de acceso bancario. La actualización automática de tasas requiere que la fuente pública de BAC responda; el registro de movimientos y las tasas manuales pueden funcionar sin conexión después de preparar la PWA.

@@ -21,3 +21,8 @@
 .fx-conversion-preview>span{display:block}.fx-conversion-preview>strong{display:block}@media(max-width:700px){.toolbar-right{width:100%;flex-wrap:wrap;justify-content:flex-end;gap:8px}.summary-currency{min-width:0;flex:1 0 100%}.summary-currency select{width:165px;min-width:0;max-width:calc(100% - 110px)}}
 
 .backup-actions:has(.backup-file-input:focus-visible) .backup-file-label{outline:3px solid #087f46;outline-offset:3px}
+
+/* Account transitions hide financial editing until the owner workspace is ready. */
+.main-content[hidden]{display:none!important}.cloud-status-trigger{border:0;background:transparent;cursor:pointer;font:inherit;font-size:11px;text-align:left}.cloud-account-gate{margin:36px auto;padding:32px;max-width:650px;color:#173f2d;text-align:center}.cloud-account-gate>svg{color:#087f46}.cloud-account-gate h1{font-size:24px;margin:15px 0}.cloud-account-gate p{font-size:13px;line-height:1.8;color:#526e5f;margin-bottom:20px}.cloud-account-gate .primary-button{margin:auto}@media(max-width:700px){.cloud-account-gate{margin:15px;padding:20px}.cloud-account-gate h1{font-size:20px}.cloud-account-gate p{font-size:12px}}
+
+.cloud-finance-controls{border:0;margin:0;padding:0;min-width:0}.cloud-finance-controls:disabled{opacity:.65}
